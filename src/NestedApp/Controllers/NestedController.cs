@@ -7,13 +7,13 @@ namespace NestedApp.Controllers {
 
     [ApiVersion( "1.0" )]
     [ApiController]
-    [Route( "v{version:apiVersion}/nested" )]
     public class NestedController : Controller {
         public NestedController() {
         }
 
         [HttpGet]
-        [Route( "", Name = nameof( GetNestedValues ) )]
+        [Route( "v{version:apiVersion}/nested", Name = nameof( GetNestedValues ) )]
+        [Route( "nested", Name = "GetNestedValuesNoVersion" )]
         [ProducesResponseType( typeof( string[] ), 200 )]
         [ProducesResponseType( typeof( string[] ), 404 )]
         [Produces( "application/json" )]

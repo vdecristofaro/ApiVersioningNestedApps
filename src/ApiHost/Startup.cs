@@ -68,7 +68,6 @@ namespace ApiHost {
                 app.UseHsts();
             }
 
-            app.IsolatedMap<NestedStartup>( "/nested" );
             app.UseHttpsRedirection();
             app.UseDefaultFiles();
             app.UseStaticFiles();
@@ -83,6 +82,7 @@ namespace ApiHost {
                 }
             } );
 
+            //app.IsolatedMap<NestedStartup>( "/nested" );
         }
 
     }
