@@ -82,7 +82,7 @@ namespace ApiHost {
                 }
             } );
 
-            //app.IsolatedMap<NestedStartup>( "/nested" );
+            app.IsolatedMap<NestedStartup>( "/nested" );
         }
 
     }
