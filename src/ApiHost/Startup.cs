@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
+using ApiHost.Controllers;
+using Common;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
@@ -15,7 +17,8 @@ using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Microsoft.Extensions.PlatformAbstractions;
-using NestedApp;
+using NestedApp1;
+using NestedApp2;
 using Newtonsoft.Json.Serialization;
 using Swashbuckle.AspNetCore.Swagger;
 
@@ -30,6 +33,8 @@ namespace ApiHost {
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices( IServiceCollection services ) {
             services.TryAddSingleton<IHttpContextAccessor, HttpContextAccessor>();
+            services.AddTransient<IHelloService, ItalianHelloService>();
+            services.AddTransient<IGlobalHelloService, DefaultGlobalService>();
 
             services.AddApiVersioning( o => {
                 o.AssumeDefaultVersionWhenUnspecified = true;
@@ -46,9 +51,16 @@ namespace ApiHost {
             services.AddMvcCore()
                     .SetCompatibilityVersion( CompatibilityVersion.Version_2_1 )
                     .AddApiExplorer()
-                    .AddVersionedApiExplorer( o => o.GroupNameFormat = "'v'VVV" )
+                    .AddVersionedApiExplorer( o => {
+                        o.GroupNameFormat = "'v'VVV";
+                        o.SubstituteApiVersionInUrl = true;
+                    } )
                     .AddJsonFormatters( jsonSettings => {
                         jsonSettings.ContractResolver = new CamelCasePropertyNamesContractResolver();
+                    } )
+                    .ConfigureApplicationPartManager( manager => {
+                        manager.FeatureProviders.Clear();
+                        manager.FeatureProviders.Add( new TypedControllerFeatureProvider<HostControllerBase>() );
                     } );
 
             services.AddSwaggerGen( swaggerOptions => {
@@ -61,6 +73,8 @@ namespace ApiHost {
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure( IApplicationBuilder app, IHostingEnvironment env, IApiVersionDescriptionProvider provider ) {
+            app.IsolatedMap<NestedStartup1>( "/n1" );
+            app.IsolatedMap<NestedStartup2>( "/n2" );
             if ( env.IsDevelopment() ) {
                 app.UseDeveloperExceptionPage();
             }
@@ -81,8 +95,6 @@ namespace ApiHost {
                         .SwaggerEndpoint( $"/swagger/{description.GroupName}/swagger.json", description.GroupName.ToUpperInvariant() );
                 }
             } );
-
-            app.IsolatedMap<NestedStartup>( "/nested" );
         }
 
     }

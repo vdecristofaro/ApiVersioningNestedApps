@@ -18,6 +18,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\NestedApp\NestedApp.csproj" />
+    <ProjectReference Include="..\NestedApp2\NestedApp2.csproj" />
+    <ProjectReference Include="..\NestedApp1\NestedApp1.csproj" />
   </ItemGroup>
 </Project>
