@@ -1,6 +1,7 @@
 ﻿
 using System;
 using System.Diagnostics;
+using Common;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Builder.Internal;
 using Microsoft.AspNetCore.Hosting;

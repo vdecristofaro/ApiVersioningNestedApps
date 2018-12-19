@@ -10,8 +10,7 @@ using Microsoft.AspNetCore.Mvc.Infrastructure;
 
 namespace ApiHost.Controllers {
 
-    [ApiVersion( "1.0" )]
-    [ApiVersion( "2.0" )]
+    [ApiVersionNeutral]
     [ApiController]
     [Route( "v{version:apiVersion}/routes" )]
     public class RoutesController : HostControllerBase {

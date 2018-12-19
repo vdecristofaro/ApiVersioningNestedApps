@@ -1,22 +1,13 @@
-﻿using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Threading.Tasks;
-using ApiHost.Controllers;
+﻿using ApiHost.Controllers;
 using Common;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.HttpsPolicy;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.ApiExplorer;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
-using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Options;
-using Microsoft.Extensions.PlatformAbstractions;
 using NestedApp1;
 using NestedApp2;
 using Newtonsoft.Json.Serialization;
@@ -49,12 +40,8 @@ namespace ApiHost {
             // add the versioned api explorer, which also adds IApiVersionDescriptionProvider service
             // note: the specified format code will format the version as "'v'major[.minor][-status]"
             services.AddMvcCore()
-                    .SetCompatibilityVersion( CompatibilityVersion.Version_2_1 )
+                    .SetCompatibilityVersion( CompatibilityVersion.Version_2_2 )
                     .AddApiExplorer()
-                    .AddVersionedApiExplorer( o => {
-                        o.GroupNameFormat = "'v'VVV";
-                        o.SubstituteApiVersionInUrl = true;
-                    } )
                     .AddJsonFormatters( jsonSettings => {
                         jsonSettings.ContractResolver = new CamelCasePropertyNamesContractResolver();
                     } )
@@ -62,6 +49,11 @@ namespace ApiHost {
                         manager.FeatureProviders.Clear();
                         manager.FeatureProviders.Add( new TypedControllerFeatureProvider<HostControllerBase>() );
                     } );
+            services.AddVersionedApiExplorer( o => {
+                o.GroupNameFormat = "'v'VVV";
+                o.SubstituteApiVersionInUrl = true;
+            } );
+
 
             services.AddSwaggerGen( swaggerOptions => {
                 swaggerOptions
@@ -73,7 +65,7 @@ namespace ApiHost {
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure( IApplicationBuilder app, IHostingEnvironment env, IApiVersionDescriptionProvider provider ) {
-            app.IsolatedMap<NestedStartup1>( "/n1" );
+            app.IsolatedMap<NestedStartup1>( "/v{version:apiVersion}/n1" );
             app.IsolatedMap<NestedStartup2>( "/n2" );
             if ( env.IsDevelopment() ) {
                 app.UseDeveloperExceptionPage();
