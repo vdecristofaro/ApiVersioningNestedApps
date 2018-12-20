@@ -65,7 +65,7 @@ namespace ApiHost {
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure( IApplicationBuilder app, IHostingEnvironment env, IApiVersionDescriptionProvider provider ) {
-            app.IsolatedMap<NestedStartup1>( "/v{version:apiVersion}/n1" );
+            app.IsolatedMap<NestedStartup1>( "/n1" );
             app.IsolatedMap<NestedStartup2>( "/n2" );
             if ( env.IsDevelopment() ) {
                 app.UseDeveloperExceptionPage();

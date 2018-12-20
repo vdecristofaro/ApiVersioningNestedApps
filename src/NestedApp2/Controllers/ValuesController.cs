@@ -18,6 +18,7 @@ using MediatR;
 using Microsoft.AspNetCore.Mvc;
 
 namespace NestedApp2.Controllers {
+
     [ApiVersion( "2.0" )]
     [ApiController]
     [Route( "v{version:apiVersion}/values2" )]

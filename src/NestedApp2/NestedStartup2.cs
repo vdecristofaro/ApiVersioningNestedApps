@@ -15,16 +15,19 @@ using Swashbuckle.AspNetCore.Swagger;
 namespace NestedApp2 {
     public class NestedStartup2 {
         private readonly IHostingEnvironment _hostingEnvironment;
+        private readonly IGlobalHelloService _globalHelloService;
 
-        public NestedStartup2( IHostingEnvironment hostingEnvironment, IConfiguration configuration ) {
+        public NestedStartup2( IHostingEnvironment hostingEnvironment, IConfiguration configuration, IGlobalHelloService globalHelloService ) {
             _hostingEnvironment = hostingEnvironment;
             Configuration = configuration;
+            _globalHelloService = globalHelloService;
         }
 
         public IConfiguration Configuration { get; }
 
         public void ConfigureServices( IServiceCollection services ) {
             services.AddTransient<IHelloService, EnglishHelloService>();
+            services.AddTransient<IGlobalHelloService>( provider => { return _globalHelloService; } );
 
             services.AddApiVersioning( o => {
                 o.AssumeDefaultVersionWhenUnspecified = true;
@@ -33,7 +36,7 @@ namespace NestedApp2 {
             } );
 
             services.AddMvcCore()
-                    .SetCompatibilityVersion( CompatibilityVersion.Version_2_1 )
+                    .SetCompatibilityVersion( CompatibilityVersion.Version_2_2 )
                     .AddApiExplorer()
                     .AddJsonFormatters( jsonSettings => {
                         jsonSettings.ContractResolver = new CamelCasePropertyNamesContractResolver();
@@ -52,26 +55,11 @@ namespace NestedApp2 {
                 typeof(IHelloService).Assembly
             };
             services.AddMediatR( assemblies );
-            services.AddTransient( typeof( IPipelineBehavior<,> ), typeof( PipelineBehavior1<,> ) );
-
-            services.AddSwaggerGen( swaggerOptions => {
-                swaggerOptions
-                    .SwaggerDoc( "v1", new Info { Title = "My API V1", Version = "v1" } );
-                swaggerOptions
-                    .SwaggerDoc( "v2", new Info { Title = "My API V2", Version = "v2" } );
-            } );
+            services.AddTransient( typeof( IPipelineBehavior<,> ), typeof( PipelineBehavior2<,> ) );
         }
 
         public void Configure( IApplicationBuilder app, IHostingEnvironment env, IApiVersionDescriptionProvider provider ) {
             app.UseMvc();
-            app.UseSwagger();
-            app.UseSwaggerUI( swaggerUiOptions => {
-                // build a swagger endpoint for each discovered API version
-                foreach ( var description in provider.ApiVersionDescriptions ) {
-                    swaggerUiOptions
-                        .SwaggerEndpoint( $"/swagger/{description.GroupName}/swagger.json", description.GroupName.ToUpperInvariant() );
-                }
-            } );
         }
     }
 }

@@ -35,7 +35,7 @@ namespace NestedApp1 {
             } );
 
             services.AddMvcCore()
-                    .SetCompatibilityVersion( CompatibilityVersion.Version_2_1 )
+                    .SetCompatibilityVersion( CompatibilityVersion.Version_2_2 )
                     .AddApiExplorer()
                     .AddJsonFormatters( jsonSettings => {
                         jsonSettings.ContractResolver = new CamelCasePropertyNamesContractResolver();
@@ -55,25 +55,10 @@ namespace NestedApp1 {
             };
             services.AddMediatR( assemblies );
             services.AddTransient( typeof( IPipelineBehavior<,> ), typeof( PipelineBehavior1<,> ) );
-
-            services.AddSwaggerGen( swaggerOptions => {
-                swaggerOptions
-                    .SwaggerDoc( "v1", new Info { Title = "My API V1", Version = "v1" } );
-                swaggerOptions
-                    .SwaggerDoc( "v2", new Info { Title = "My API V2", Version = "v2" } );
-            } );
         }
 
         public void Configure( IApplicationBuilder app, IHostingEnvironment env, IApiVersionDescriptionProvider provider ) {
             app.UseMvc();
-            app.UseSwagger();
-            app.UseSwaggerUI( swaggerUiOptions => {
-                // build a swagger endpoint for each discovered API version
-                foreach ( var description in provider.ApiVersionDescriptions ) {
-                    swaggerUiOptions
-                        .SwaggerEndpoint( $"/swagger/{description.GroupName}/swagger.json", description.GroupName.ToUpperInvariant() );
-                }
-            } );
         }
     }
 }
