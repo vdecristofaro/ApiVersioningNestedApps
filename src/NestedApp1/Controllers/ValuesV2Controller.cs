@@ -7,27 +7,27 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace NestedApp1.Controllers {
 
-    [ApiVersion( "1.0" )]
+    [ApiVersion( "2.0" )]
     [ApiController]
-    [Route( "v{version:apiVersion}/values1" )]
-    public class ValuesController : NestedApp1Controller {
+    [Route( "v{version:apiVersion}/values" )]
+    public class ValuesV2Controller : NestedApp1Controller {
         private readonly IHelloService _helloService;
         private readonly IMediator _mediator;
         private readonly IGlobalHelloService _globalHelloService;
 
-        public ValuesController( IHelloService helloService, IMediator mediator, IGlobalHelloService globalHelloService ) {
+        public ValuesV2Controller( IHelloService helloService, IMediator mediator, IGlobalHelloService globalHelloService ) {
             _helloService = helloService;
             _mediator = mediator;
             _globalHelloService = globalHelloService;
         }
 
         [HttpGet]
-        [Route( "", Name = nameof( GetNestedApp1Values ) )]
+        [Route( "", Name = nameof( GetNestedApp1V2Values ) )]
         [ProducesResponseType( typeof( string[] ), 200 )]
         [ProducesResponseType( typeof( string[] ), 404 )]
         [Produces( "application/json" )]
         [Consumes( "application/json" )]
-        public async Task<IActionResult> GetNestedApp1Values() {
+        public async Task<IActionResult> GetNestedApp1V2Values() {
             _helloService.SayHello();
             _globalHelloService.SayHello();
             var request = new ValueRequest() {
