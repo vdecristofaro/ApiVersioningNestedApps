@@ -35,7 +35,7 @@ namespace NestedApp2 {
                 o.DefaultApiVersion = new ApiVersion( 1, 0 );
             } );
 
-            services.AddMvcCore()
+            services.AddMvcCore( options => options.EnableEndpointRouting = false )
                     .SetCompatibilityVersion( CompatibilityVersion.Version_2_2 )
                     .AddApiExplorer()
                     .AddJsonFormatters( jsonSettings => {

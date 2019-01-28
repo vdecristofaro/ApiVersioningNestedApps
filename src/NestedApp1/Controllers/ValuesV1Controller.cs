@@ -31,7 +31,8 @@ namespace NestedApp1.Controllers {
             _helloService.SayHello();
             _globalHelloService.SayHello();
             var request = new ValueRequest() {
-                Index = 1
+                AppIndex = 1,
+                EndpointVersion = 1
             };
             var results = await _mediator.Send( request );
             return await Task.FromResult<IActionResult>( Ok( results ) );

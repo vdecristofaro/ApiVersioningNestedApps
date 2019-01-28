@@ -22,7 +22,7 @@ namespace Common {
         public async Task<IEnumerable<string>> Handle( ValueRequest request, CancellationToken cancellationToken ) {
             var results = new List<string>();
             for ( int i = 1; i < 6; i++ ) {
-                results.Add( $"Nested App {request.Index} - Value {i}" );
+                results.Add( $"Nested App {request.AppIndex} - Version {request.EndpointVersion} - Value {i}" );
             }
             return await Task.FromResult( results );
         }

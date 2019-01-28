@@ -39,7 +39,7 @@ namespace ApiHost {
 
             // add the versioned api explorer, which also adds IApiVersionDescriptionProvider service
             // note: the specified format code will format the version as "'v'major[.minor][-status]"
-            services.AddMvcCore()
+            services.AddMvcCore( options => options.EnableEndpointRouting = false )
                     .SetCompatibilityVersion( CompatibilityVersion.Version_2_2 )
                     .AddApiExplorer()
                     .AddJsonFormatters( jsonSettings => {

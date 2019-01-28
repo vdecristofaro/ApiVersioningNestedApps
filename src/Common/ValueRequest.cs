@@ -20,6 +20,8 @@ namespace Common {
         public ValueRequest() {
         }
 
-        public int Index { get; set; }
+        public int AppIndex { get; set; }
+
+        public int EndpointVersion { get; set; }
     }
 }
