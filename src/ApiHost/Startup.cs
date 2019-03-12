@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.ApiExplorer;
+using Microsoft.AspNetCore.Mvc.Versioning;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
@@ -27,10 +28,13 @@ namespace ApiHost {
             services.AddTransient<IHelloService, ItalianHelloService>();
             services.AddTransient<IGlobalHelloService, DefaultGlobalService>();
 
-            services.AddApiVersioning( o => {
-                o.AssumeDefaultVersionWhenUnspecified = true;
-                o.ReportApiVersions = true;
-                o.DefaultApiVersion = new ApiVersion( 1, 0 );
+            services.AddApiVersioning( options => {
+                options.AssumeDefaultVersionWhenUnspecified = true;
+                options.ReportApiVersions = true;
+                options.DefaultApiVersion = new ApiVersion( 1, 0 );
+                options.UseApiBehavior = true;
+                options.ApiVersionReader = new HeaderApiVersionReader( "x-domec-api-version" );
+                options.ApiVersionSelector = new LowestImplementedApiVersionSelector( options );
             } );
 
             services.AddHttpsRedirection( redirectOptions => {
@@ -53,7 +57,6 @@ namespace ApiHost {
                 o.GroupNameFormat = "'v'VVV";
                 o.SubstituteApiVersionInUrl = true;
             } );
-
 
             services.AddSwaggerGen( swaggerOptions => {
                 swaggerOptions

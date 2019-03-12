@@ -9,8 +9,10 @@ using Microsoft.AspNetCore.Hosting.Internal;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc.ApiExplorer;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.ObjectPool;
+using Microsoft.Extensions.Options;
 
 namespace ApiHost {
     public static class HostingExtensions {
@@ -72,7 +74,6 @@ namespace ApiHost {
             if ( path.HasValue && path.Value.EndsWith( "/", StringComparison.Ordinal ) ) {
                 throw new ArgumentException( "The path must not end with a '/'", nameof( path ) );
             }
-
             return app.Isolate( builder => builder.Map( path, configuration ), registration );
         }
 
@@ -214,10 +215,11 @@ namespace ApiHost {
             services.AddSingleton( provider.GetRequiredService<IApplicationLifetime>() );
             services.AddSingleton( provider.GetRequiredService<IHttpContextFactory>() );
 
-            services.AddSingleton( provider.GetRequiredService<IApiDescriptionGroupCollectionProvider>() );
-
             services.AddSingleton( provider.GetRequiredService<DiagnosticSource>() );
             services.AddSingleton( provider.GetRequiredService<DiagnosticListener>() );
+
+            services.AddSingleton( provider.GetService<IApiDescriptionGroupCollectionProvider>() );
+            services.AddSingleton( provider.GetService<IApiVersionDescriptionProvider>() );
 
             services.AddSingleton<ObjectPoolProvider, DefaultObjectPoolProvider>();
 

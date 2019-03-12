@@ -9,7 +9,7 @@ namespace NestedApp1.Controllers {
 
     [ApiVersion( "1.0" )]
     [ApiController]
-    [Route( "v{version:apiVersion}/values" )]
+    [Route( "values" )]
     public class ValuesV1Controller : NestedApp1Controller {
         private readonly IHelloService _helloService;
         private readonly IMediator _mediator;

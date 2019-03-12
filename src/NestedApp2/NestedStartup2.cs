@@ -6,11 +6,12 @@ using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.ApiExplorer;
+using Microsoft.AspNetCore.Mvc.Versioning;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.DependencyInjection.Extensions;
 using NestedApp2.Controllers;
 using Newtonsoft.Json.Serialization;
-using Swashbuckle.AspNetCore.Swagger;
 
 namespace NestedApp2 {
     public class NestedStartup2 {
@@ -29,26 +30,32 @@ namespace NestedApp2 {
             services.AddTransient<IHelloService, EnglishHelloService>();
             services.AddTransient<IGlobalHelloService>( provider => { return _globalHelloService; } );
 
-            services.AddApiVersioning( o => {
-                o.AssumeDefaultVersionWhenUnspecified = true;
-                o.ReportApiVersions = true;
-                o.DefaultApiVersion = new ApiVersion( 1, 0 );
+            services.AddApiVersioning( options => {
+                options.AssumeDefaultVersionWhenUnspecified = true;
+                options.ReportApiVersions = true;
+                options.DefaultApiVersion = new ApiVersion( 3, 0 );
+                options.UseApiBehavior = true;
+                options.ApiVersionReader = new HeaderApiVersionReader( "x-domec-api-version" );
+                options.ApiVersionSelector = new LowestImplementedApiVersionSelector( options );
             } );
 
-            services.AddMvcCore( options => options.EnableEndpointRouting = false )
-                    .SetCompatibilityVersion( CompatibilityVersion.Version_2_2 )
-                    .AddApiExplorer()
-                    .AddJsonFormatters( jsonSettings => {
-                        jsonSettings.ContractResolver = new CamelCasePropertyNamesContractResolver();
-                    } )
-                    .ConfigureApplicationPartManager( manager => {
-                        manager.FeatureProviders.Clear();
-                        manager.FeatureProviders.Add( new TypedControllerFeatureProvider<NestedApp2Controller>() );
-                    } );
-            services.AddVersionedApiExplorer( o => {
-                o.GroupNameFormat = "'v'VVV";
-                o.SubstituteApiVersionInUrl = true;
+            services.AddMvcCore( options => {
+            } )
+            .SetCompatibilityVersion( CompatibilityVersion.Version_2_2 )
+            //.AddApiExplorer()
+            .AddJsonFormatters( jsonSettings => {
+                jsonSettings.ContractResolver = new CamelCasePropertyNamesContractResolver();
+            } )
+            .ConfigureApplicationPartManager( manager => {
+                manager.FeatureProviders.Clear();
+                manager.FeatureProviders.Add( new TypedControllerFeatureProvider<NestedApp2Controller>() );
             } );
+            services.TryAddEnumerable( ServiceDescriptor.Transient<IApiDescriptionProvider, DefaultApiDescriptionProvider>() );
+
+            //services.AddVersionedApiExplorer( o => {
+            //    o.GroupNameFormat = "'v'VVV";
+            //    o.SubstituteApiVersionInUrl = true;
+            //} );
 
             var assemblies = new Assembly[] {
                 typeof(NestedStartup2).Assembly,

@@ -12,7 +12,7 @@ namespace ApiHost.Controllers {
 
     [ApiVersionNeutral]
     [ApiController]
-    [Route( "v{version:apiVersion}/routes" )]
+    [Route( "routes" )]
     public class RoutesController : HostControllerBase {
         private readonly IActionDescriptorCollectionProvider _actionDescriptorCollectionProvider;
         private readonly IHelloService _helloService;

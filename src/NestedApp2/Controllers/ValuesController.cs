@@ -21,7 +21,7 @@ namespace NestedApp2.Controllers {
 
     [ApiVersion( "3.0" )]
     [ApiController]
-    [Route( "v{version:apiVersion}/values" )]
+    [Route( "values" )]
     public class ValuesController : NestedApp2Controller {
         private readonly IHelloService _helloService;
         private readonly IMediator _mediator;
